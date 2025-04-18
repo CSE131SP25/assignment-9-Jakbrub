@@ -79,4 +79,8 @@ public class Snake {
 			return false;
 		}
 	}
+	
+	public BodySegment getHead() {
+		return segments.get(0);
+	}
 }

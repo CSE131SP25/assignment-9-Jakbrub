@@ -1,12 +1,16 @@
 package assignment9;
 
 import java.awt.event.KeyEvent;
+
+import java.util.LinkedList;
+
 import edu.princeton.cs.introcs.StdDraw;
 
 public class Game {
 	
 	Snake snake;
 	Food food;
+	private LinkedList<Wall> walls = new LinkedList<>();
 	
 	public Game() {
 		StdDraw.enableDoubleBuffering();
@@ -15,7 +19,7 @@ public class Game {
 	}
 	
 	public void play() {
-		while (snake.isInbounds()) {
+		while (snake.isInbounds() && checkWalls()) {
 			int dir = getKeypress();
 			/*
 			 * 1. Pass direction to your snake
@@ -26,12 +30,13 @@ public class Game {
 			snake.changeDirection(dir);
 			snake.move();
 			if (snake.eatFood(food)) {
+				walls.add(new Wall());
 				food = new Food();
 			}
 			updateDrawing();
 		}
 	}
-	
+
 	private int getKeypress() {
 		if(StdDraw.isKeyPressed(KeyEvent.VK_W)) {
 			return 1;
@@ -46,6 +51,20 @@ public class Game {
 		}
 	}
 	
+	private boolean checkWalls() {
+		for (Wall item : walls) {
+			if ((food.getX() == item.getX()) && (food.getY() == item.getY())) {
+				food = new Food();
+			}
+		}
+		for (Wall item : walls) {
+			if ((snake.getHead().getX() == item.getX()) && (snake.getHead().getY() == item.getY())) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Clears the screen, draws the snake and food, pauses, and shows the content
 	 */
@@ -58,6 +77,9 @@ public class Game {
 		 */
 		StdDraw.clear();
 		this.snake.draw();
+		for (Wall item : walls) {
+			item.draw();
+		}
 		this.food.draw();
 		StdDraw.pause(100);
 		StdDraw.show();
