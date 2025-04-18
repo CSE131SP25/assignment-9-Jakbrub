@@ -4,16 +4,18 @@ import java.util.LinkedList;
 
 public class Snake {
 
-	private static final double SEGMENT_SIZE = 0.02;
-	private static final double MOVEMENT_SIZE = SEGMENT_SIZE * 1.5;
-	private LinkedList<BodySegment> segments;
-	private double deltaX;
-	private double deltaY;
+	private static final double SEGMENT_SIZE = 0.05;
+	private static final int MOVEMENT_SIZE = 1;
+	private LinkedList<BodySegment> segments = new LinkedList<>();
+	private int deltaX;
+	private int deltaY;
 	
 	public Snake() {
-		//FIXME - set up the segments instance variable
-		deltaX = 0;
+		deltaX = MOVEMENT_SIZE;
 		deltaY = 0;
+		for (int i = 0; i < 5; i++) {
+			segments.add(new BodySegment(6 - i, 2, SEGMENT_SIZE));
+		}
 	}
 	
 	public void changeDirection(int direction) {
@@ -37,14 +39,19 @@ public class Snake {
 	 * based on the current direction of travel
 	 */
 	public void move() {
-		//FIXME
+		for (int i = segments.size() - 1; i > 0; i--) {
+			segments.set(i, new BodySegment(segments.get(i - 1).getX(), segments.get(i - 1).getY(), SEGMENT_SIZE));
+		}
+		segments.set(0, segments.get(0).move(deltaX, deltaY));
 	}
 	
 	/**
 	 * Draws the snake by drawing each segment
 	 */
 	public void draw() {
-		//FIXME
+		for (int i = 0; i < segments.size(); i++) {
+			segments.get(i).draw();
+		}
 	}
 	
 	/**
@@ -53,8 +60,12 @@ public class Snake {
 	 * @return true if the snake successfully ate the food
 	 */
 	public boolean eatFood(Food f) {
-		//FIXME
-		return false;
+		if ((segments.get(0).getX() == f.getX()) && (segments.get(0).getY() == f.getY())) {
+			segments.add(new BodySegment(segments.getLast().getX(), segments.getLast().getY(), SEGMENT_SIZE));
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -62,7 +73,10 @@ public class Snake {
 	 * @return whether or not the head is in the bounds of the window
 	 */
 	public boolean isInbounds() {
-		//FIXME
-		return true;
+		if ((segments.get(0).getX() > 0) && (segments.get(0).getX() < 21) && (segments.get(0).getY() > 0) && (segments.get(0).getY() < 21)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
